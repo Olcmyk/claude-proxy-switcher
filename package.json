@@ -1,0 +1,84 @@
+{
+  "name": "claude-proxy-switcher",
+  "displayName": "Claude 代理切换器",
+  "description": "一键管理和切换多个 Claude 中转配置",
+  "version": "0.1.0",
+  "publisher": "booffaoex",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "claude",
+    "proxy",
+    "anthropic",
+    "api"
+  ],
+  "license": "MIT",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "claudeProxySwitcher.openPanel",
+        "title": "Claude 代理切换器: 打开管理面板"
+      },
+      {
+        "command": "claudeProxySwitcher.addProxy",
+        "title": "Claude 代理切换器: 添加代理",
+        "icon": "$(add)"
+      },
+      {
+        "command": "claudeProxySwitcher.testAllProxies",
+        "title": "Claude 代理切换器: 测试所有代理",
+        "icon": "$(zap)"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "claude-proxy-switcher",
+          "title": "Claude 代理",
+          "icon": "$(cloud)"
+        }
+      ]
+    },
+    "views": {
+      "claude-proxy-switcher": [
+        {
+          "type": "webview",
+          "id": "claudeProxySwitcher.proxyManager",
+          "name": ""
+        }
+      ]
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "claudeProxySwitcher.addProxy",
+          "group": "navigation",
+          "when": "view == claudeProxySwitcher.proxyManager"
+        },
+        {
+          "command": "claudeProxySwitcher.testAllProxies",
+          "group": "navigation",
+          "when": "view == claudeProxySwitcher.proxyManager"
+        }
+      ]
+    },
+    "viewsWelcome": []
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.80.0",
+    "typescript": "^5.0.0"
+  }
+}
