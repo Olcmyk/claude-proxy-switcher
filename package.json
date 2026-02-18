@@ -2,8 +2,8 @@
   "name": "claude-proxy-switcher",
   "displayName": "Claude Proxy Switcher",
   "description": "Manage and switch multiple Claude API proxy configurations with one click",
-  "version": "0.1.0",
-  "publisher": "booffaoex",
+  "version": "1.0.0",
+  "publisher": "Olcmyk",
   "engines": {
     "vscode": "^1.80.0"
   },
@@ -14,10 +14,23 @@
     "claude",
     "proxy",
     "anthropic",
-    "api"
+    "api",
+    "中转",
+    "claude中转管理器",
+    "claude代理切换",
+    "代理"
+
   ],
   "icon": "images/marketplace-icon.png",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Olcmyk/claude-proxy-switcher"
+  },
+  "bugs": {
+    "url": "https://github.com/Olcmyk/claude-proxy-switcher/issues"
+  },
+  "homepage": "https://github.com/Olcmyk/claude-proxy-switcher#readme",
   "activationEvents": [
     "onStartupFinished"
   ],
@@ -76,7 +89,8 @@
   "scripts": {
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
-    "dev": "npm run watch"
+    "dev": "npm run watch",
+    "package": "npm run compile && vsce package"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",

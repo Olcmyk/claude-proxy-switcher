@@ -1,32 +1,6 @@
 # Claude Proxy Switcher
 
-[English](#english) | [中文](#中文)
-
----
-
-## English
-
-A VS Code extension that helps you manage and switch between multiple Claude API proxy configurations with ease.
-
-The UI language automatically matches your VS Code display language. If your VS Code is set to Chinese, the interface shows Chinese. Otherwise, English is used.
-
-### Features
-
-- **Easy Configuration**: Add, manage, and delete multiple proxy configurations
-- **Quick Switch**: Switch between proxies with a single click
-- **Connection Test**: Test proxy connections to verify they're working
-- **Visual Status**: See which proxy is currently active in the status bar
-- **Secure Storage**: API keys are securely stored in VS Code's secret storage
-- **Automatic i18n**: UI language follows your VS Code language setting
-
-### Usage
-
-1. Open the Claude Proxy Switcher panel from the Activity Bar
-2. Click the **+** button or use "Add Proxy" command to add a new proxy
-3. Enter the proxy name, API Base URL, and API Key
-4. Click a proxy card to switch to it
-5. Use the lightning icon to test the connection
-6. Delete proxies with the trash icon
+[中文](#中文) | [English](#english)
 
 ---
 
@@ -45,6 +19,10 @@ The UI language automatically matches your VS Code display language. If your VS 
 - **安全存储**: API Key 安全保存在 VS Code 的密钥存储中
 - **自动国际化**: 界面语言跟随 VS Code 语言设置
 
+### 使用体验
+
+![Claude Proxy Switcher Demo](images/display-demo.png)
+
 ### 使用方法
 
 1. 从活动栏打开 Claude Proxy Switcher 面板
@@ -53,6 +31,36 @@ The UI language automatically matches your VS Code display language. If your VS 
 4. 点击代理卡片切换到该代理
 5. 使用闪电图标测试连接
 6. 使用垃圾图标删除代理
+
+---
+
+## English
+
+A VS Code extension that helps you manage and switch between multiple Claude API proxy configurations with ease.
+
+The UI language automatically matches your VS Code display language. If your VS Code is set to Chinese, the interface shows Chinese. Otherwise, English is used.
+
+### Features
+
+- **Easy Configuration**: Add, manage, and delete multiple proxy configurations
+- **Quick Switch**: Switch between proxies with a single click
+- **Connection Test**: Test proxy connections to verify they're working
+- **Visual Status**: See which proxy is currently active in the status bar
+- **Secure Storage**: API keys are securely stored in VS Code's secret storage
+- **Automatic i18n**: UI language follows your VS Code language setting
+
+### Demo
+
+![Claude Proxy Switcher Demo](images/display-demo.png)
+
+### Usage
+
+1. Open the Claude Proxy Switcher panel from the Activity Bar
+2. Click the **+** button or use "Add Proxy" command to add a new proxy
+3. Enter the proxy name, API Base URL, and API Key
+4. Click a proxy card to switch to it
+5. Use the lightning icon to test the connection
+6. Delete proxies with the trash icon
 
 ---
 
