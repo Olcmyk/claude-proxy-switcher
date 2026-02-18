@@ -33,6 +33,8 @@ export const translations = {
     activeBadge: 'In Use',
     testConnectionTitle: 'Test Connection',
     deleteTitle: 'Delete',
+    deleteConfirm: 'Delete proxy "{name}"?',
+    deleteConfirmYes: 'Delete',
     pageTitle: 'Claude Proxy Switcher Configuration',
 
     // Clipboard
@@ -74,6 +76,8 @@ export const translations = {
     activeBadge: '当前使用',
     testConnectionTitle: '测试连接',
     deleteTitle: '删除',
+    deleteConfirm: '删除代理 "{name}"?',
+    deleteConfirmYes: '删除',
     pageTitle: 'Claude Proxy Switcher 配置',
 
     // 剪贴板

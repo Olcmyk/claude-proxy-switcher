@@ -296,7 +296,7 @@ export class ProxyManagerPanel implements vscode.WebviewViewProvider {
     const icons = {
       bolt: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 2L4 9h4l-1 5 5-7H8l1-5z"/></svg>',
       spinner: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2a6 6 0 1 1-6 6"/></svg>',
-      trash: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 4h10M6 4V3h4v1M5 4v9h6V4"/></svg>',
+      trash: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M6.5 7v5M9.5 7v5M3 4l1 10c0 0.5 0.5 1 1 1h6c0.5 0 1-0.5 1-1l1-10M6 4V2.5c0-0.3 0.2-0.5 0.5-0.5h3c0.3 0 0.5 0.2 0.5 0.5V4"/></svg>',
       plus: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="8" y1="3" x2="8" y2="13"/><line x1="3" y1="8" x2="13" y2="8"/></svg>'
     };
 

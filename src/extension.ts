@@ -74,6 +74,15 @@ export async function activate(context: vscode.ExtensionContext) {
 
       case 'deleteProxy': {
         const proxy = configStorage.getProxy(message.id);
+        const confirmText = t('deleteConfirmYes');
+        const result = await vscode.window.showWarningMessage(
+          t('deleteConfirm', undefined, { name: proxy?.name || '' }),
+          { modal: true },
+          confirmText
+        );
+        if (result !== confirmText) {
+          break;
+        }
         await secretStorage.deleteApiKey(message.id);
         await configStorage.deleteProxy(message.id);
         if (configStorage.getState().activeProxyId === null) {
