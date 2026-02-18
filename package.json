@@ -19,7 +19,6 @@
     "claude中转管理器",
     "claude代理切换",
     "代理"
-
   ],
   "icon": "images/marketplace-icon.png",
   "license": "MIT",
@@ -95,6 +94,7 @@
   "devDependencies": {
     "@types/node": "^20.0.0",
     "@types/vscode": "^1.80.0",
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.0",
+    "vsce": "^2.15.0"
   }
 }
