@@ -16,6 +16,7 @@
     "anthropic",
     "api"
   ],
+  "icon": "images/marketplace-icon.png",
   "license": "MIT",
   "activationEvents": [
     "onStartupFinished"
@@ -43,7 +44,7 @@
         {
           "id": "claude-proxy-switcher",
           "title": "Claude 代理",
-          "icon": "$(cloud)"
+          "icon": "images/sidebar-icon.svg"
         }
       ]
     },
