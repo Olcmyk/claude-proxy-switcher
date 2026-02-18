@@ -5,6 +5,7 @@ import { ProxyService } from './services/proxyService';
 import { ApiTestService } from './services/apiTestService';
 import { ProxyManagerPanel } from './webview/ProxyManagerPanel';
 import { WebviewMessage, ProxyConfig } from './types';
+import { getLanguage, t } from './i18n';
 
 let statusBarItem: vscode.StatusBarItem;
 
@@ -38,13 +39,14 @@ export async function activate(context: vscode.ExtensionContext) {
 
   const updateStatusBar = () => {
     const state = configStorage.getState();
+    const lang = getLanguage();
     if (state.activeProxyId) {
       const proxy = state.proxies.find(p => p.id === state.activeProxyId);
-      statusBarItem.text = `$(cloud) ${proxy?.name || '代理'}`;
-      statusBarItem.tooltip = `当前代理: ${proxy?.name}\n${proxy?.baseUrl}`;
+      statusBarItem.text = `$(cloud) ${proxy?.name || t('statusBarProxy', lang)}`;
+      statusBarItem.tooltip = t('statusBarTooltip', lang, { name: proxy?.name || '', url: proxy?.baseUrl || '' });
     } else {
-      statusBarItem.text = '$(cloud) 无代理';
-      statusBarItem.tooltip = '点击管理 Claude 代理';
+      statusBarItem.text = `$(cloud) ${t('statusBarNoProxy', lang)}`;
+      statusBarItem.tooltip = t('statusBarTooltipEmpty', lang);
     }
   };
 
@@ -65,7 +67,7 @@ export async function activate(context: vscode.ExtensionContext) {
         };
         await secretStorage.setApiKey(proxy.id, message.apiKey);
         await configStorage.addProxy(proxy);
-        vscode.window.showInformationMessage(`已添加代理: ${proxy.name}`);
+        vscode.window.showInformationMessage(t('addProxySuccess', undefined, { name: proxy.name }));
         sendStateUpdate();
         break;
       }
@@ -77,7 +79,7 @@ export async function activate(context: vscode.ExtensionContext) {
         if (configStorage.getState().activeProxyId === null) {
           proxyService.clearProxy();
         }
-        vscode.window.showInformationMessage(`已删除代理: ${proxy?.name}`);
+        vscode.window.showInformationMessage(t('deleteProxySuccess', undefined, { name: proxy?.name || '' }));
         sendStateUpdate();
         break;
       }
@@ -88,11 +90,11 @@ export async function activate(context: vscode.ExtensionContext) {
           try {
             await proxyService.switchProxy(message.id, proxy.baseUrl);
             await configStorage.setActiveProxy(message.id);
-            vscode.window.showInformationMessage(`已切换到代理: ${proxy.name}`);
+            vscode.window.showInformationMessage(t('switchProxySuccess', undefined, { name: proxy.name }));
             sendStateUpdate();
           } catch (e: unknown) {
             const error = e as Error;
-            vscode.window.showErrorMessage(`切换失败: ${error.message}`);
+            vscode.window.showErrorMessage(t('switchProxyFailed', undefined, { error: error.message }));
           }
         }
         break;
@@ -101,14 +103,15 @@ export async function activate(context: vscode.ExtensionContext) {
       case 'testProxy': {
         const proxy = configStorage.getProxy(message.id);
         if (proxy) {
+          const lang = getLanguage();
           vscode.window.withProgress(
-            { location: vscode.ProgressLocation.Notification, title: `测试连接: ${proxy.name}` },
+            { location: vscode.ProgressLocation.Notification, title: t('testProxyTitle', lang, { name: proxy.name }) },
             async () => {
               const result = await apiTestService.testConnection(message.id, proxy.baseUrl);
               await configStorage.updateProxyTestResult(message.id, result);
               panel.postMessage({ type: 'testResult', id: message.id, result });
               if (result.success) {
-                vscode.window.showInformationMessage(`${proxy.name}: 连接成功 (${result.latency}ms)`);
+                vscode.window.showInformationMessage(t('testProxySuccess', lang, { name: proxy.name, latency: result.latency || 0 }));
               } else {
                 vscode.window.showWarningMessage(`${proxy.name}: ${result.error}`);
               }
@@ -121,7 +124,7 @@ export async function activate(context: vscode.ExtensionContext) {
       case 'clearProxy': {
         proxyService.clearProxy();
         await configStorage.setActiveProxy(null);
-        vscode.window.showInformationMessage('已清除代理配置');
+        vscode.window.showInformationMessage(t('clearProxySuccess'));
         sendStateUpdate();
         break;
       }

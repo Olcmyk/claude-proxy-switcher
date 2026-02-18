@@ -30,4 +30,5 @@ export type ExtensionMessage =
   | { type: 'openAddForm' }
   | { type: 'testAllProxies' }
   | { type: 'error'; message: string }
-  | { type: 'info'; message: string };
+  | { type: 'info'; message: string }
+  | { type: 'i18n'; translations: Record<string, string> };

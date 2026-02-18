@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { ProxySwitcherState, WebviewMessage, ExtensionMessage } from '../types';
+import { getLanguage, t, translations } from '../i18n';
 
 export class ProxyManagerPanel implements vscode.WebviewViewProvider {
   public static readonly viewType = 'claudeProxySwitcher.proxyManager';
@@ -26,6 +27,11 @@ export class ProxyManagerPanel implements vscode.WebviewViewProvider {
 
     webviewView.webview.html = this._getHtmlContent();
 
+    // Send translation data to webview
+    const lang = getLanguage();
+    const i18nData = translations[lang];
+    webviewView.webview.postMessage({ type: 'i18n', translations: i18nData });
+
     webviewView.webview.onDidReceiveMessage((message: WebviewMessage) => {
       this._onMessage(message);
     });
@@ -41,11 +47,11 @@ export class ProxyManagerPanel implements vscode.WebviewViewProvider {
 
   private _getHtmlContent(): string {
     return `<!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Claude 代理配置</title>
+  <title>Claude Proxy Switcher</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -213,34 +219,33 @@ export class ProxyManagerPanel implements vscode.WebviewViewProvider {
 
   <div id="addForm" class="add-form">
     <div class="form-group">
-      <label>名称</label>
-      <input type="text" id="proxyName" placeholder="例如：闲鱼商家A">
+      <label id="labelName"></label>
+      <input type="text" id="proxyName" placeholder="">
     </div>
     <div class="form-group">
-      <label>API Base URL</label>
+      <label id="labelUrl"></label>
       <input type="text" id="proxyUrl" placeholder="https://api.example.com">
     </div>
     <div class="form-group">
-      <label>API Key</label>
+      <label id="labelKey"></label>
       <input type="password" id="proxyKey" placeholder="sk-xxx">
     </div>
     <div class="form-actions">
-      <button class="btn btn-secondary" onclick="toggleAddForm()">取消</button>
-      <button class="btn btn-primary" onclick="addProxy()">添加</button>
+      <button class="btn btn-secondary" onclick="toggleAddForm()" id="btnCancel"></button>
+      <button class="btn btn-primary" onclick="addProxy()" id="btnAdd"></button>
     </div>
   </div>
 
   <div id="proxyList" class="proxy-list"></div>
 
-  <button id="clearBtn" class="clear-btn" style="display:none" onclick="clearProxy()">
-    清除当前代理配置
-  </button>
+  <button id="clearBtn" class="clear-btn" style="display:none" onclick="clearProxy()"></button>
 
   <script>
     const vscode = acquireVsCodeApi();
     let state = { activeProxyId: null, proxies: [] };
     let testingIds = new Set();
     let showTestResults = localStorage.getItem('showTestResults') === 'true';
+    let i18n = {};
 
     const icons = {
       bolt: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 2L4 9h4l-1 5 5-7H8l1-5z"/></svg>',
@@ -248,6 +253,17 @@ export class ProxyManagerPanel implements vscode.WebviewViewProvider {
       trash: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 4h10M6 4V3h4v1M5 4v9h6V4"/></svg>',
       plus: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="8" y1="3" x2="8" y2="13"/><line x1="3" y1="8" x2="13" y2="8"/></svg>'
     };
+
+    function initializeUI() {
+      document.getElementById('labelName').textContent = i18n.nameLabel;
+      document.getElementById('proxyName').placeholder = i18n.namePlaceholder;
+      document.getElementById('labelUrl').textContent = i18n.urlLabel;
+      document.getElementById('labelKey').textContent = i18n.keyLabel;
+      document.getElementById('btnCancel').textContent = i18n.cancelButton;
+      document.getElementById('btnAdd').textContent = i18n.addButton;
+      document.getElementById('clearBtn').textContent = i18n.clearButton;
+      document.title = i18n.pageTitle;
+    }
 
     function toggleAddForm() {
       document.getElementById('addForm').classList.toggle('show');
@@ -308,7 +324,7 @@ export class ProxyManagerPanel implements vscode.WebviewViewProvider {
       const clearBtn = document.getElementById('clearBtn');
 
       if (state.proxies.length === 0) {
-        list.innerHTML = '<div class="empty-state">' + icons.plus + '<br>暂无代理配置<br>点击 + 添加</div>';
+        list.innerHTML = '<div class="empty-state">' + icons.plus + '<br>' + i18n.emptyState.replace('\\n', '<br>') + '</div>';
         clearBtn.style.display = 'none';
         return;
       }
@@ -322,6 +338,7 @@ export class ProxyManagerPanel implements vscode.WebviewViewProvider {
 
         let testBtnClass = 'test-btn';
         let testBtnContent = icons.bolt;
+        let testBtnTitle = i18n.testConnectionTitle;
 
         if (isTesting) {
           testBtnClass += ' loading';
@@ -339,12 +356,12 @@ export class ProxyManagerPanel implements vscode.WebviewViewProvider {
         return '<div class="proxy-card' + (isActive ? ' active' : '') + '" onclick="switchProxy(\\'' + proxy.id + '\\')">' +
           '<div class="proxy-header">' +
             '<span class="proxy-name">' + escapeHtml(proxy.name) + '</span>' +
-            (isActive ? '<span class="active-badge">当前使用</span>' : '') +
+            (isActive ? '<span class="active-badge">' + i18n.activeBadge + '</span>' : '') +
           '</div>' +
           '<div class="proxy-url">' + escapeHtml(proxy.baseUrl) + '</div>' +
           '<div class="proxy-footer">' +
-            '<button class="' + testBtnClass + '" onclick="testProxy(event, \\'' + proxy.id + '\\')" title="测试连接">' + testBtnContent + '</button>' +
-            '<button class="delete-btn" onclick="deleteProxy(event, \\'' + proxy.id + '\\')" title="删除">' + icons.trash + '</button>' +
+            '<button class="' + testBtnClass + '" onclick="testProxy(event, \\'' + proxy.id + '\\')" title="' + testBtnTitle + '">' + testBtnContent + '</button>' +
+            '<button class="delete-btn" onclick="deleteProxy(event, \\'' + proxy.id + '\\')" title="' + i18n.deleteTitle + '">' + icons.trash + '</button>' +
           '</div>' +
         '</div>';
       }).join('');
@@ -359,9 +376,12 @@ export class ProxyManagerPanel implements vscode.WebviewViewProvider {
     window.addEventListener('message', event => {
       const message = event.data;
       switch (message.type) {
+        case 'i18n':
+          i18n = message.translations;
+          initializeUI();
+          break;
         case 'stateUpdate':
           state = message.state;
-          // 如果没有启用测试结果显示，清除所有测试结果，回到默认闪电图标
           if (!showTestResults) {
             state.proxies.forEach(proxy => {
               proxy.lastTestResult = undefined;

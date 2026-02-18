@@ -1,7 +1,7 @@
 {
   "name": "claude-proxy-switcher",
-  "displayName": "Claude 代理切换器",
-  "description": "一键管理和切换多个 Claude 中转配置",
+  "displayName": "Claude Proxy Switcher",
+  "description": "Manage and switch multiple Claude API proxy configurations with one click",
   "version": "0.1.0",
   "publisher": "booffaoex",
   "engines": {
@@ -26,16 +26,16 @@
     "commands": [
       {
         "command": "claudeProxySwitcher.openPanel",
-        "title": "Claude 代理切换器: 打开管理面板"
+        "title": "Claude Proxy Switcher: Open Manager"
       },
       {
         "command": "claudeProxySwitcher.addProxy",
-        "title": "Claude 代理切换器: 添加代理",
+        "title": "Claude Proxy Switcher: Add Proxy",
         "icon": "$(add)"
       },
       {
         "command": "claudeProxySwitcher.testAllProxies",
-        "title": "Claude 代理切换器: 测试所有代理",
+        "title": "Claude Proxy Switcher: Test All Proxies",
         "icon": "$(zap)"
       }
     ],
@@ -43,7 +43,7 @@
       "activitybar": [
         {
           "id": "claude-proxy-switcher",
-          "title": "Claude 代理",
+          "title": "Claude Proxy Switcher",
           "icon": "images/sidebar-icon.svg"
         }
       ]
