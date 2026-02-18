@@ -22,7 +22,8 @@ export type WebviewMessage =
   | { type: 'switchProxy'; id: string }
   | { type: 'testProxy'; id: string }
   | { type: 'clearProxy' }
-  | { type: 'refresh' };
+  | { type: 'refresh' }
+  | { type: 'readClipboard' };
 
 export type ExtensionMessage =
   | { type: 'stateUpdate'; state: ProxySwitcherState }
@@ -31,4 +32,5 @@ export type ExtensionMessage =
   | { type: 'testAllProxies' }
   | { type: 'error'; message: string }
   | { type: 'info'; message: string }
-  | { type: 'i18n'; translations: Record<string, string> };
+  | { type: 'i18n'; translations: Record<string, string> }
+  | { type: 'clipboardContent'; text: string };

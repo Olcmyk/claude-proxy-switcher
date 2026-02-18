@@ -34,6 +34,13 @@ export const translations = {
     testConnectionTitle: 'Test Connection',
     deleteTitle: 'Delete',
     pageTitle: 'Claude Proxy Switcher Configuration',
+
+    // Clipboard
+    clipboardButton: 'Read Clipboard',
+    clipboardFoundBoth: 'URL and API Key filled from clipboard',
+    clipboardFoundUrl: 'URL filled from clipboard',
+    clipboardFoundKey: 'API Key filled from clipboard',
+    clipboardNoData: 'No proxy data found in clipboard',
   },
   zh: {
     // 状态栏
@@ -68,6 +75,13 @@ export const translations = {
     testConnectionTitle: '测试连接',
     deleteTitle: '删除',
     pageTitle: 'Claude Proxy Switcher 配置',
+
+    // 剪贴板
+    clipboardButton: '读取剪贴板',
+    clipboardFoundBoth: '已从剪贴板填入 URL 和 API Key',
+    clipboardFoundUrl: '已从剪贴板填入 URL',
+    clipboardFoundKey: '已从剪贴板填入 API Key',
+    clipboardNoData: '剪贴板中未找到代理数据',
   },
 };
 

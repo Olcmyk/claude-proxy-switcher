@@ -172,7 +172,8 @@ export class ProxyManagerPanel implements vscode.WebviewViewProvider {
       outline: none;
       border-color: var(--vscode-focusBorder);
     }
-    .form-actions { display: flex; gap: 8px; justify-content: flex-end; }
+    .form-actions { display: flex; gap: 8px; align-items: center; }
+    .form-actions-right { display: flex; gap: 8px; margin-left: auto; }
     .btn {
       padding: 6px 12px;
       border: none;
@@ -211,6 +212,43 @@ export class ProxyManagerPanel implements vscode.WebviewViewProvider {
       border-color: var(--vscode-focusBorder);
       color: var(--vscode-foreground);
     }
+    .clipboard-btn {
+      background: transparent;
+      border: none;
+      color: var(--vscode-descriptionForeground);
+      cursor: pointer;
+      padding: 4px 6px;
+      border-radius: 3px;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .clipboard-btn:hover {
+      background: var(--vscode-toolbar-hoverBackground);
+      color: var(--vscode-foreground);
+    }
+    .clipboard-btn svg { width: 14px; height: 14px; }
+    .toast {
+      position: fixed;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--vscode-notifications-background);
+      color: var(--vscode-notifications-foreground);
+      border: 1px solid var(--vscode-panel-border);
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 11px;
+      opacity: 0;
+      transition: opacity 0.3s;
+      z-index: 100;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+    .toast.show { opacity: 1; }
+    .toast.success { border-color: var(--vscode-testing-iconPassed); }
+    .toast.warning { border-color: var(--vscode-testing-iconFailed); }
   </style>
 </head>
 <body>
@@ -231,14 +269,22 @@ export class ProxyManagerPanel implements vscode.WebviewViewProvider {
       <input type="password" id="proxyKey" placeholder="sk-xxx">
     </div>
     <div class="form-actions">
-      <button class="btn btn-secondary" onclick="toggleAddForm()" id="btnCancel"></button>
-      <button class="btn btn-primary" onclick="addProxy()" id="btnAdd"></button>
+      <button class="clipboard-btn" onclick="readClipboard()" id="clipboardBtn">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="1" width="6" height="2" rx="0.5"/><path d="M4 3h8v11H4z"/><path d="M6 7h4M6 9h4"/></svg>
+        <span id="clipboardBtnText"></span>
+      </button>
+      <div class="form-actions-right">
+        <button class="btn btn-secondary" onclick="toggleAddForm()" id="btnCancel"></button>
+        <button class="btn btn-primary" onclick="addProxy()" id="btnAdd"></button>
+      </div>
     </div>
   </div>
 
   <div id="proxyList" class="proxy-list"></div>
 
   <button id="clearBtn" class="clear-btn" style="display:none" onclick="clearProxy()"></button>
+
+  <div id="toast" class="toast"></div>
 
   <script>
     const vscode = acquireVsCodeApi();
@@ -262,6 +308,7 @@ export class ProxyManagerPanel implements vscode.WebviewViewProvider {
       document.getElementById('btnCancel').textContent = i18n.cancelButton;
       document.getElementById('btnAdd').textContent = i18n.addButton;
       document.getElementById('clearBtn').textContent = i18n.clearButton;
+      document.getElementById('clipboardBtnText').textContent = i18n.clipboardButton;
       document.title = i18n.pageTitle;
     }
 
@@ -373,6 +420,109 @@ export class ProxyManagerPanel implements vscode.WebviewViewProvider {
       return div.innerHTML;
     }
 
+    function showToast(message, type) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.className = 'toast ' + (type || '') + ' show';
+      clearTimeout(showToast._timer);
+      showToast._timer = setTimeout(() => { toast.classList.remove('show'); }, 2500);
+    }
+    showToast._timer = null;
+
+    function parseClipboardForProxy(text) {
+      const result = { url: null, key: null };
+      if (!text) return result;
+
+      // Extract ANTHROPIC_BASE_URL from various formats:
+      // export ANTHROPIC_BASE_URL="https://..." / echo 'export ANTHROPIC_BASE_URL="https://..."' >> ...
+      const urlPatterns = [
+        /ANTHROPIC_BASE_URL\\s*=\\s*"([^"]+)"/,
+        /ANTHROPIC_BASE_URL\\s*=\\s*'([^']+)'/,
+        /ANTHROPIC_BASE_URL\\s*=\\s*([^\\s"';&]+)/,
+      ];
+      for (const pattern of urlPatterns) {
+        const match = text.match(pattern);
+        if (match && match[1]) {
+          result.url = match[1];
+          break;
+        }
+      }
+
+      // Extract ANTHROPIC_AUTH_TOKEN or ANTHROPIC_API_KEY
+      const keyPatterns = [
+        /ANTHROPIC_(?:AUTH_TOKEN|API_KEY)\\s*=\\s*"([^"]+)"/,
+        /ANTHROPIC_(?:AUTH_TOKEN|API_KEY)\\s*=\\s*'([^']+)'/,
+        /ANTHROPIC_(?:AUTH_TOKEN|API_KEY)\\s*=\\s*([^\\s"';&]+)/,
+      ];
+      for (const pattern of keyPatterns) {
+        const match = text.match(pattern);
+        if (match && match[1]) {
+          result.key = match[1];
+          break;
+        }
+      }
+
+      // Fallback: look for sk- pattern as API key
+      if (!result.key) {
+        const skMatch = text.match(/\\b(sk-[A-Za-z0-9_-]{16,})\\b/);
+        if (skMatch) {
+          result.key = skMatch[1];
+        }
+      }
+
+      // Fallback: look for standalone https URL (not common domains like github, google, etc.)
+      if (!result.url) {
+        const urls = text.match(/https?:\\/\\/[^\\s"'<>\\]\\)]+/g);
+        if (urls) {
+          const candidate = urls.find(u => !u.includes('github.com') && !u.includes('google.com'));
+          if (candidate) {
+            result.url = candidate.replace(/[\\/]+$/, '');
+          }
+        }
+      }
+
+      return result;
+    }
+
+    function readClipboard() {
+      vscode.postMessage({ type: 'readClipboard' });
+    }
+
+    function handleClipboardContent(text) {
+      const parsed = parseClipboardForProxy(text);
+      const hasUrl = !!parsed.url;
+      const hasKey = !!parsed.key;
+
+      if (!hasUrl && !hasKey) {
+        showToast(i18n.clipboardNoData, 'warning');
+        return;
+      }
+
+      // Open form if not already open
+      const form = document.getElementById('addForm');
+      if (!form.classList.contains('show')) {
+        form.classList.add('show');
+      }
+
+      if (hasUrl) {
+        document.getElementById('proxyUrl').value = parsed.url;
+      }
+      if (hasKey) {
+        document.getElementById('proxyKey').value = parsed.key;
+      }
+
+      // Focus on the name field so user can fill it in
+      document.getElementById('proxyName').focus();
+
+      if (hasUrl && hasKey) {
+        showToast(i18n.clipboardFoundBoth, 'success');
+      } else if (hasUrl) {
+        showToast(i18n.clipboardFoundUrl, 'success');
+      } else {
+        showToast(i18n.clipboardFoundKey, 'success');
+      }
+    }
+
     window.addEventListener('message', event => {
       const message = event.data;
       switch (message.type) {
@@ -409,6 +559,9 @@ export class ProxyManagerPanel implements vscode.WebviewViewProvider {
             vscode.postMessage({ type: 'testProxy', id: proxy.id });
           });
           renderProxies();
+          break;
+        case 'clipboardContent':
+          handleClipboardContent(message.text);
           break;
       }
     });

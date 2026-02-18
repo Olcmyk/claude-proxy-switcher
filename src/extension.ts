@@ -129,6 +129,12 @@ export async function activate(context: vscode.ExtensionContext) {
         break;
       }
 
+      case 'readClipboard': {
+        const text = await vscode.env.clipboard.readText();
+        panel.postMessage({ type: 'clipboardContent', text: text || '' });
+        break;
+      }
+
       case 'refresh': {
         sendStateUpdate();
         break;
