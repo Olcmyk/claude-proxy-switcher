@@ -74,7 +74,8 @@
   },
   "scripts": {
     "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./"
+    "watch": "tsc -watch -p ./",
+    "dev": "npm run watch"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",

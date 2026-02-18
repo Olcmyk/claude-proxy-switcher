@@ -53,17 +53,9 @@ export class ProxyManagerPanel implements vscode.WebviewViewProvider {
       font-size: var(--vscode-font-size);
       color: var(--vscode-foreground);
       background: var(--vscode-sideBar-background);
-      padding: 12px;
+      padding: 0 12px 12px 12px;
     }
-    .header {
-      display: flex;
-      justify-content: flex-start;
-      align-items: center;
-      margin-bottom: 12px;
-      padding-bottom: 8px;
-      border-bottom: 1px solid var(--vscode-panel-border);
-      gap: 4px;
-    }
+    .header { display: none; }
     .header-actions { display: flex; gap: 4px; }
     .icon-btn {
       background: transparent;
