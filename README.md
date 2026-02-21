@@ -1,5 +1,7 @@
 # Claude Proxy Switcher
 
+[![VS Code Marketplace](https://img.shields.io/visual-studio-marketplace/v/Olcmyk.claude-proxy-switcher)](https://marketplace.visualstudio.com/items?itemName=Olcmyk.claude-proxy-switcher)
+
 [中文](#中文) | [English](#english)
 
 ---
@@ -7,6 +9,8 @@
 ## 中文
 
 一个 VS Code 扩展，帮助你轻松管理和切换多个 Claude API 代理配置。
+
+[在 VS Code Marketplace 中安装](https://marketplace.visualstudio.com/items?itemName=Olcmyk.claude-proxy-switcher)
 
 界面语言会自动跟随你的 VS Code 显示语言。如果你的 VS Code 设置为中文，界面会显示中文；否则显示英文。
 
@@ -37,6 +41,8 @@
 ## English
 
 A VS Code extension that helps you manage and switch between multiple Claude API proxy configurations with ease.
+
+[Install from VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=Olcmyk.claude-proxy-switcher)
 
 The UI language automatically matches your VS Code display language. If your VS Code is set to Chinese, the interface shows Chinese. Otherwise, English is used.
 

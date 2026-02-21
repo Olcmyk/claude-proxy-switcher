@@ -2,7 +2,7 @@
   "name": "claude-proxy-switcher",
   "displayName": "Claude Proxy Switcher",
   "description": "Manage and switch multiple Claude API proxy configurations with one click",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "publisher": "Olcmyk",
   "engines": {
     "vscode": "^1.80.0"
