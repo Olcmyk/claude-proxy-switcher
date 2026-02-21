@@ -42,10 +42,10 @@ export async function activate(context: vscode.ExtensionContext) {
     const lang = getLanguage();
     if (state.activeProxyId) {
       const proxy = state.proxies.find(p => p.id === state.activeProxyId);
-      statusBarItem.text = `$(cloud) ${proxy?.name || t('statusBarProxy', lang)}`;
+      statusBarItem.text = `$(key) ${proxy?.name || t('statusBarProxy', lang)}`;
       statusBarItem.tooltip = t('statusBarTooltip', lang, { name: proxy?.name || '', url: proxy?.baseUrl || '' });
     } else {
-      statusBarItem.text = `$(cloud) ${t('statusBarNoProxy', lang)}`;
+      statusBarItem.text = `$(key) ${t('statusBarNoProxy', lang)}`;
       statusBarItem.tooltip = t('statusBarTooltipEmpty', lang);
     }
   };
