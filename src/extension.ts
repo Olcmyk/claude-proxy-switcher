@@ -21,19 +21,19 @@ export async function activate(context: vscode.ExtensionContext) {
 
   const panel = new ProxyManagerPanel(context.extensionUri);
 
-  const syncActiveProxy = () => {
+  const syncActiveProxy = async () => {
     const state = configStorage.getState();
     const current = proxyService.getCurrentProxy();
 
     if (current.baseUrl && current.hasToken) {
       const matchingProxy = state.proxies.find(p => p.baseUrl === current.baseUrl);
       if (matchingProxy && state.activeProxyId !== matchingProxy.id) {
-        configStorage.setActiveProxy(matchingProxy.id);
+        await configStorage.setActiveProxy(matchingProxy.id);
       } else if (!matchingProxy && state.activeProxyId !== null) {
-        configStorage.setActiveProxy(null);
+        await configStorage.setActiveProxy(null);
       }
     } else if (state.activeProxyId !== null) {
-      configStorage.setActiveProxy(null);
+      await configStorage.setActiveProxy(null);
     }
   };
 
@@ -51,7 +51,6 @@ export async function activate(context: vscode.ExtensionContext) {
   };
 
   const sendStateUpdate = () => {
-    syncActiveProxy();
     panel.updateState(configStorage.getState());
     updateStatusBar();
   };
@@ -145,6 +144,7 @@ export async function activate(context: vscode.ExtensionContext) {
       }
 
       case 'refresh': {
+        await syncActiveProxy();
         sendStateUpdate();
         break;
       }
@@ -181,10 +181,8 @@ export async function activate(context: vscode.ExtensionContext) {
     })
   );
 
-  syncActiveProxy();
+  await syncActiveProxy();
   updateStatusBar();
-
-  setTimeout(() => sendStateUpdate(), 500);
 }
 
 export function deactivate() {}

@@ -25,15 +25,24 @@ export class ProxyManagerPanel implements vscode.WebviewViewProvider {
       localResourceRoots: [this._extensionUri]
     };
 
+    // Register message handler BEFORE setting HTML to avoid race condition
+    // where the webview sends 'refresh' before the handler is attached
+    webviewView.webview.onDidReceiveMessage((message: WebviewMessage) => {
+      this._onMessage(message);
+    });
+
     webviewView.webview.html = this._getHtmlContent();
 
-    // Send translation data to webview
+    // Send translation data to webview (VS Code queues this until webview is ready)
     const lang = getLanguage();
     const i18nData = translations[lang];
     webviewView.webview.postMessage({ type: 'i18n', translations: i18nData });
 
-    webviewView.webview.onDidReceiveMessage((message: WebviewMessage) => {
-      this._onMessage(message);
+    // Re-send state when the view becomes visible again
+    webviewView.onDidChangeVisibility(() => {
+      if (webviewView.visible) {
+        this._onMessage({ type: 'refresh' });
+      }
     });
   }
 
@@ -371,7 +380,7 @@ export class ProxyManagerPanel implements vscode.WebviewViewProvider {
       const clearBtn = document.getElementById('clearBtn');
 
       if (state.proxies.length === 0) {
-        list.innerHTML = '<div class="empty-state">' + icons.plus + '<br>' + i18n.emptyState.replace('\\n', '<br>') + '</div>';
+        list.innerHTML = '<div class="empty-state">' + icons.plus + '<br>' + (i18n.emptyState || '').replace('\\n', '<br>') + '</div>';
         clearBtn.style.display = 'none';
         return;
       }
@@ -566,8 +575,8 @@ export class ProxyManagerPanel implements vscode.WebviewViewProvider {
       }
     });
 
-    renderProxies();
     vscode.postMessage({ type: 'refresh' });
+    renderProxies();
   </script>
 </body>
 </html>`;
