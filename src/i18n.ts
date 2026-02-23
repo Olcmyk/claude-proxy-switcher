@@ -19,7 +19,7 @@ export const translations = {
 
     // Form
     nameLabel: 'Name',
-    namePlaceholder: 'e.g.: Company A',
+    namePlaceholder: 'e.g.: Proxy Platform',
     urlLabel: 'API Base URL',
     urlPlaceholder: 'https://api.example.com',
     keyLabel: 'API Key',
@@ -36,6 +36,9 @@ export const translations = {
     deleteConfirm: 'Delete proxy "{name}"?',
     deleteConfirmYes: 'Delete',
     pageTitle: 'Claude Proxy Switcher Configuration',
+
+    // Default name
+    defaultProxyName: 'Proxy Platform',
 
     // Clipboard
     clipboardButton: 'Read Clipboard',
@@ -62,7 +65,7 @@ export const translations = {
 
     // 表单
     nameLabel: '名称',
-    namePlaceholder: '例如：公司A',
+    namePlaceholder: '例如：中转平台',
     urlLabel: 'API Base URL',
     urlPlaceholder: 'https://api.example.com',
     keyLabel: 'API Key',
@@ -79,6 +82,9 @@ export const translations = {
     deleteConfirm: '删除代理 "{name}"?',
     deleteConfirmYes: '删除',
     pageTitle: 'Claude Proxy Switcher 配置',
+
+    // 默认名称
+    defaultProxyName: '中转平台',
 
     // 剪贴板
     clipboardButton: '读取剪贴板',

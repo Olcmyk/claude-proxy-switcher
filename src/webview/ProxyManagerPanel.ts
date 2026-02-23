@@ -325,13 +325,30 @@ export class ProxyManagerPanel implements vscode.WebviewViewProvider {
       document.getElementById('addForm').classList.toggle('show');
     }
 
+    function generateDefaultName() {
+      const baseName = i18n.defaultProxyName || '中转平台';
+      const existingNames = new Set(state.proxies.map(p => p.name));
+      if (!existingNames.has(baseName)) {
+        return baseName;
+      }
+      let index = 2;
+      while (existingNames.has(baseName + index)) {
+        index++;
+      }
+      return baseName + index;
+    }
+
     function addProxy() {
-      const name = document.getElementById('proxyName').value.trim();
+      let name = document.getElementById('proxyName').value.trim();
       const baseUrl = document.getElementById('proxyUrl').value.trim();
       const apiKey = document.getElementById('proxyKey').value.trim();
 
-      if (!name || !baseUrl || !apiKey) {
+      if (!baseUrl || !apiKey) {
         return;
+      }
+
+      if (!name) {
+        name = generateDefaultName();
       }
 
       vscode.postMessage({ type: 'addProxy', name, baseUrl, apiKey });
@@ -520,15 +537,14 @@ export class ProxyManagerPanel implements vscode.WebviewViewProvider {
         document.getElementById('proxyKey').value = parsed.key;
       }
 
-      // Focus on the name field so user can fill it in
-      document.getElementById('proxyName').focus();
-
       if (hasUrl && hasKey) {
         showToast(i18n.clipboardFoundBoth, 'success');
       } else if (hasUrl) {
         showToast(i18n.clipboardFoundUrl, 'success');
+        document.getElementById('proxyKey').focus();
       } else {
         showToast(i18n.clipboardFoundKey, 'success');
+        document.getElementById('proxyUrl').focus();
       }
     }
 
